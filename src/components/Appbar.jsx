@@ -17,13 +17,13 @@ const Appbar = () => {
   };
 
   return (
-    <div className="bg-white py-4 px-6 flex justify-between items-center border-b border-sky-950">
-      <div className="text-sky-500 text-2xl font-bold font-sans">Edu Connect</div>
+    <div className="bg-white py-4 px-6 flex justify-between items-center border-b shadow-md">
+      <h5 className="block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-gray-900">
+        Edu Connect
+      </h5>
       <div className="flex items-center">
         {(userId !== undefined) ? (
           <>
-            <a href="#" className="text-sky-500 mr-4 hover:text-gray-300 scale-110 text-baseyy">Courses</a>
-            <a href="#" className="text-sky-500 mr-4 hover:text-gray-300 scale-110 text-baseyy">Live Classes</a>
             <UserButton afterSignOutUrl='/' />
           </>
         ) : (
