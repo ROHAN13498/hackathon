@@ -1,11 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import { UserButton } from '@clerk/clerk-react';
 
 const Appbar = () => {
   const { userId } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation()
 
   const handleAboutClick = () => {
     navigate('/about');
@@ -24,6 +25,7 @@ const Appbar = () => {
       <div className="flex items-center">
         {(userId !== undefined) ? (
           <>
+
             <UserButton afterSignOutUrl='/' />
           </>
         ) : (
