@@ -107,8 +107,11 @@ const AddCourse = () => {
             <div className="w-64">
                 <TSideBar />
             </div>
-            <div className="flex-grow">
+            <div className="flex-grow pt-3">
                 <div className="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+                    <div className="text-center py-4 bg-gray-100">
+                        <p className="text-lg text-gray-700">Edit Course Image Title And Description Below</p>
+                    </div>
                     <div className="relative">
                         {isEditingImage ? (
                             <div>
@@ -168,6 +171,14 @@ const AddCourse = () => {
                         <div key={index} className="bg-white border border-gray-200 rounded-md p-4 mb-4 shadow-md">
                             <p className="text-lg font-medium text-gray-800">{index + 1}. {chapter.title}</p>
                             <p className="text-gray-600">Class Starts on {chapter.Date} at {chapter.time}</p>
+                            <div className="flex justify-between mt-2">
+                                <button className="text-blue-400 hover:text-blue-700 font py-1 px-2 rounded">
+                                    Add Video
+                                </button>
+                                <button className="text-green-400 hover:text-green-700 font py-1 px-2 rounded">
+                                    Start Class
+                                </button>
+                            </div>
                         </div>
                     ))}
                     <AddChapter onAddChapter={(newChapter) => setCourse({ ...Course, chapters: [...Course.chapters, newChapter] })} />

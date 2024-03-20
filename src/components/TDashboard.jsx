@@ -5,6 +5,7 @@ import { cn } from "../utils/cn";
 import { useNavigate } from 'react-router-dom';
 const TDashboard = () => {
     const navigate=useNavigate();
+    const [editingCourseId, setEditingCourseId] = useState(null);
     const cardData = [
         {
             id: 1,
@@ -182,7 +183,17 @@ const TDashboard = () => {
 
         }
     ];
+    const handleEdit = (courseId) => {
+        setEditingCourseId(courseId);
+    };
 
+    const handleModify = () => {
+        // Implement modify functionality here
+    };
+
+    const handleDelete = () => {
+        // Implement delete functionality here
+    };
     const [courses, setCourses] = useState(cardData);
     return (
         <div className="flex">
@@ -230,7 +241,14 @@ const TDashboard = () => {
                                     <div className="text-sm text-gray-900">{course.description}</div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button className="text-indigo-600 hover:text-indigo-900">Edit</button>
+                                {editingCourseId === course.id ? (
+                                        <>
+                                            <button onClick={handleModify} className="text-indigo-600 hover:text-indigo-900 mr-2">Modify</button>
+                                            <button onClick={handleDelete} className="text-red-600 hover:text-red-900">Delete</button>
+                                        </>
+                                    ) : (
+                                        <button onClick={() => handleEdit(course.id)} className="text-indigo-600 hover:text-indigo-900">Edit</button>
+                                    )}
                                 </td>
                             </tr>
                         ))}

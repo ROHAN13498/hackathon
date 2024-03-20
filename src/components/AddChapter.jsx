@@ -10,7 +10,6 @@ const AddChapter = ({ onAddChapter }) => {
 
     const handleToggleInputs = () => {
         setShowInputs(!showInputs);
-        // Reset input fields when hiding inputs
         if (!showInputs) {
             setNewChapterTitle('');
             setNewChapterDate('');
@@ -27,7 +26,6 @@ const AddChapter = ({ onAddChapter }) => {
             videLink: ''
         };
         onAddChapter(newChapter);
-        // Reset input fields
         setNewChapterTitle('');
         setNewChapterDate('');
         setNewChapterTime('');
