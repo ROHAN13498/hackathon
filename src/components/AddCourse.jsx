@@ -1,74 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TSideBar from './TSideBar';
 import { MdEdit } from 'react-icons/md';
 import DropboxComponent from './Dropbox';
 import AddChapter from './AddChapter';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 const AddCourse = () => {
-    const [Course, setCourse] = useState({
-        id: 1,
-        title: 'UI/UX Review Check',
-        description: "Because it's about motivating the doers. Because I'm here to follow my dreams and inspire others.",
-        imageLink: 'https://akm-img-a-in.tosshub.com/indiatoday/images/story/202012/chris-ried-ieic5Tq8YMk-unsplas_1200x768.jpeg?size=1200:675',
-        chapters: [
-            {
-                title: 'C1',
-                Date: '2024-03-01',
-                time: '06:00:00',
-                isLive: 0,
-                videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-            },
-            {
-                title: 'C2',
-                Date: '2024-03-01',
-                time: '06:00:00',
-                isLive: 0,
-                videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-            },
-            {
-                title: 'C3',
-                Date: '2024-03-01',
-                time: '06:00:00',
-                isLive: 0,
-                videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-            },
-            {
-                title: 'C4',
-                Date: '2024-03-01',
-                time: '06:00:00',
-                isLive: 1,
-                videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-            },
-            {
-                title: 'C5',
-                Date: '2024-03-01',
-                time: '06:00:00',
-                isLive: 0,
-                videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-            }
-        ]
-    });
+    const navigate=useNavigate();
+    const { teacherId, courseId } = useParams();
+    const [Course, setCourse] = useState(null);
     const [isEditingImage, setIsEditingImage] = useState(false);
-    const [newImgLink, setNewImgLink] = useState(Course.imageLink);
+    const [newImgLink, setNewImgLink] = useState('');
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [isEditingDescription, setIsEditingDescription] = useState(false);
-    const [newTitle, setNewTitle] = useState(Course.title);
-    const [newDescription, setNewDescription] = useState(Course.description);
+    const [newTitle, setNewTitle] = useState('');
+    const [newDescription, setNewDescription] = useState('');
+    const [newVidLink, setNewVidLink] = useState('');
+    useEffect(() => {
+        const fetchCourseData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/tutors/courses/${courseId}/contents`);
+                console.log(response.data.course);
+                setCourse(response.data.course);
+            } catch (error) {
+                console.error('Error fetching course data:', error);
+            }
+        };
+
+        fetchCourseData();
+        console.log(Course);
+    }, []);
 
     const handleImageEdit = () => {
         setIsEditingImage(true);
     };
-
-    const handleImageChange = (files) => {
-        if (files && files.length > 0) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                setNewImgLink(reader.result);
-            };
-            reader.readAsDataURL(files[0]);
-        }
+    const handlevideoChangeSubmit = async (moduleId) => {
+        console.log("Video Added!");
+        await axios.put(`http://localhost:5000/tutors/modules/${moduleId}/addLink`, {
+            link: newVidLink
+        });
+        setNewVidLink('');
     };
-
-    const handleImageChangeSubmit = () => {
+    const handleImageChangeSubmit = async () => {
+        // router.put('/courses/:courseId/image'
+        await axios.put(`http://localhost:5000/tutors/courses/${courseId}/image`, {
+            imageUrl: newImgLink
+        });
         if (newImgLink) {
             setCourse({ ...Course, imageLink: newImgLink });
             setNewImgLink('');
@@ -85,6 +63,7 @@ const AddCourse = () => {
     };
 
     const handleTitleChange = (event) => {
+        // /courses/:courseId
         setNewTitle(event.target.value);
     };
 
@@ -92,16 +71,53 @@ const AddCourse = () => {
         setNewDescription(event.target.value);
     };
 
-    const handleTitleChangeSubmit = () => {
-        setCourse({ ...Course, title: newTitle });
-        setIsEditingTitle(false);
+    const handleTitleChangeSubmit = async () => {
+        const requestData = {
+            title: newTitle,
+            description: newDescription !== '' ? newDescription : Course.description,
+        };
+        try {
+            await axios.put(`http://localhost:5000/tutors/courses/${courseId}`, requestData);
+            setCourse((prevCourse) => ({
+                ...prevCourse,
+                title: newTitle,
+                description: requestData.description,
+            }));
+            setIsEditingTitle(false);
+        } catch (error) {
+            console.error('Error updating course title and description:', error);
+        }
+    };
+    
+    const handleDescriptionChangeSubmit = async () => {
+        const requestData = {
+            title: newTitle !== '' ? newTitle : Course.title,
+            description: newDescription,
+        };
+        try {
+            await axios.put(`http://localhost:5000/tutors/courses/${courseId}`, requestData);
+            setCourse((prevCourse) => ({ ...prevCourse, title: requestData.title, description: requestData.description }));
+            setIsEditingDescription(false);
+        } catch (error) {
+            console.error('Error updating course title and description:', error);
+        }
+    };
+    
+    const handleDeleteChapter = async (moduleId) => {
+        try {
+            await axios.delete(`http://localhost:5000/tutors/courses/${courseId}/modules/${moduleId}`);
+            setCourse(prevState => ({
+                ...prevState,
+                modules: prevState.modules.filter(chapter => chapter._id !== moduleId)
+            }));
+        } catch (error) {
+            console.error('Error deleting chapter:', error);
+        }
     };
 
-    const handleDescriptionChangeSubmit = () => {
-        setCourse({ ...Course, description: newDescription });
-        setIsEditingDescription(false);
-    };
-
+    if (!Course) {
+        return <div>Loading...</div>;
+    }
     return (
         <div className="flex">
             <div className="w-64">
@@ -110,12 +126,13 @@ const AddCourse = () => {
             <div className="flex-grow pt-3">
                 <div className="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
                     <div className="text-center py-4 bg-gray-100">
-                        <p className="text-lg text-gray-700">Edit Course Image Title And Description Below</p>
+                        <p className="text-lg text-gray-700">Edit Course Image, Title and Description Below</p>
                     </div>
                     <div className="relative">
                         {isEditingImage ? (
                             <div>
-                                <DropboxComponent onFilesAdded={handleImageChange} />
+                                <DropboxComponent callback={(url) => setNewImgLink(url)} />
+
                                 <button onClick={handleImageChangeSubmit}>Change Image</button>
                             </div>
                         ) : (
@@ -133,7 +150,7 @@ const AddCourse = () => {
                                 <>
                                     <input
                                         type="text"
-                                        value={newTitle}
+                                        defaultValue={Course.title}
                                         onChange={handleTitleChange}
                                         className="outline-none border-b border-gray-400 flex-grow"
                                     />
@@ -150,7 +167,7 @@ const AddCourse = () => {
                             {isEditingDescription ? (
                                 <>
                                     <textarea
-                                        value={newDescription}
+                                        defaultValue={Course.description}
                                         onChange={handleDescriptionChange}
                                         className="outline-none border-b border-gray-400 w-full"
                                     />
@@ -167,21 +184,36 @@ const AddCourse = () => {
                 </div>
                 <div className="mt-4 ml-6">
                     <h2 className="text-xl font-semibold mb-2 text-gray-900">Chapters</h2>
-                    {Course.chapters.map((chapter, index) => (
-                        <div key={index} className="bg-white border border-gray-200 rounded-md p-4 mb-4 shadow-md">
+                    {Course.modules && Course.modules.map((chapter, index) => (
+                        <div key={chapter._id} className="bg-white border border-gray-200 rounded-md p-4 mb-4 shadow-md">
                             <p className="text-lg font-medium text-gray-800">{index + 1}. {chapter.title}</p>
-                            <p className="text-gray-600">Class Starts on {chapter.Date} at {chapter.time}</p>
-                            <div className="flex justify-between mt-2">
-                                <button className="text-blue-400 hover:text-blue-700 font py-1 px-2 rounded">
-                                    Add Video
+                            <p className="text-gray-600">Class Starts on {new Date(chapter.meetingDate).toLocaleDateString()} at {new Date(chapter.meetingDate).toLocaleTimeString()}</p>
+                            <div className="flex justify-between items-center mt-2">
+                                {chapter.link ? (
+                                    <a href={chapter.link} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-700 rounded ml-2">Video Link</a>
+                                ) : (
+                                    <div className="flex items-center">
+                                        <DropboxComponent callback={(url) => setNewVidLink(url)} />
+                                        <button className="text-blue-400 hover:text-blue-700 rounded ml-2" onClick={() => handlevideoChangeSubmit(chapter._id)}>Add Video</button>
+                                    </div>
+                                )}
+                                <button onClick={() => handleDeleteChapter(chapter._id)} className="text-red-600 hover:text-red-900 font py-1 px-2 rounded">
+                                    Delete
                                 </button>
-                                <button className="text-green-400 hover:text-green-700 font py-1 px-2 rounded">
+                                {chapter.link ? <button className="text-green-400 hover:text-green-700 font py-1 px-2 rounded">
+                                </button>:<button className="text-green-400 hover:text-green-700 font py-1 px-2 rounded">
                                     Start Class
-                                </button>
+                                </button>}
                             </div>
                         </div>
                     ))}
-                    <AddChapter onAddChapter={(newChapter) => setCourse({ ...Course, chapters: [...Course.chapters, newChapter] })} />
+
+                    <AddChapter teacherId={teacherId} courseId={courseId} onAddChapter={(newChapter) => setCourse({ ...Course, modules: [...Course.modules, newChapter] })} />
+                </div>
+                <div className="text-center mb-10">
+                    <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out" onClick={()=>navigate('/teacher/dashboard')}> 
+                        Publish Course
+                    </button>
                 </div>
             </div>
         </div>

@@ -1,12 +1,13 @@
 import UploadWidget from "./UploadWidget";
 
-function DropboxComponent() {
+function DropboxComponent({callback}) {
 
   const handleUpload = (error, result) => {
     if (error) {
       console.error('Upload failed:', error);
     } else {
       console.log('Upload successful:', result.info.url);
+      callback(result.info.url);
     }
   };
   return (

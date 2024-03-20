@@ -22,7 +22,7 @@ export default function App() {
         <Route path="/student/dashboard" element={<SDashboard />} />
         <Route path="/student/explore" element={<SExplore />} />
         <Route path="/teacher/profile" element={<TProfile/>}/>
-        <Route path="/teacher/addCourse" element={<AddCourse/>}/>
+        <Route path="/teacher/:teacherId/courses/:courseId" element={<AddCourse/>}/>
       </Routes>
     </Router>
   );
