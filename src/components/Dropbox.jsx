@@ -1,18 +1,10 @@
 import UploadWidget from "./UploadWidget";
 
-function DropboxComponent() {
-
-  const handleUpload = (error, result) => {
-    if (error) {
-      console.error('Upload failed:', error);
-    } else {
-      console.log('Upload successful:', result.info.url);
-    }
-  };
+function DropboxComponent({handleUpload}) {
   return (
     <UploadWidget onUpload={handleUpload}>
       {({ open }) => (
-        <button onClick={open}><button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-4">
+        <button onClick={open}><button className="bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded">
           Upload
         </button>
         </button>

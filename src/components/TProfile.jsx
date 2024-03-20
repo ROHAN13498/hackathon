@@ -57,6 +57,14 @@ const TProfile = () => {
         }
     };
 
+    const handleUpload = (error, result) => {
+        if (error) {
+            console.error('Upload failed:', error);
+        } else {
+            console.log('Upload successful from add :', result.info.url);
+        }
+    };
+
     const handleImageChangeSubmit = () => {
         if (newImgLink) {
             setTData({ ...TData, imgLink: newImgLink });
@@ -75,7 +83,7 @@ const TProfile = () => {
                     <div className="relative">
                         {isEditingImage ? (
                             <div>
-                                <DropboxComponent onFilesAdded={handleImageChange} />
+                                <DropboxComponent handleUpload={handleUpload}/>
                                 <button onClick={handleImageChangeSubmit}>Change Image</button>
                             </div>
                         ) : (

@@ -58,21 +58,26 @@ const AddCourse = () => {
         setIsEditingImage(true);
     };
 
-    const handleImageChange = (files) => {
-        if (files && files.length > 0) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                setNewImgLink(reader.result);
-            };
-            reader.readAsDataURL(files[0]);
-        }
-    };
-
     const handleImageChangeSubmit = () => {
         if (newImgLink) {
             setCourse({ ...Course, imageLink: newImgLink });
             setNewImgLink('');
             setIsEditingImage(false);
+        }
+    };
+
+    const handleUpload= (error, result) => {
+        if (error) {
+            console.error('Upload failed:', error);
+        } else {
+            console.log('Upload successful from add course IMAGE:', result.info.url);
+        }
+    };
+    const handleImageUpload = (error, result) => {
+        if (error) {
+            console.error('Upload failed:', error);
+        } else {
+            console.log('Upload successful from add course IMAGE:', result.info.url);
         }
     };
 
@@ -115,7 +120,7 @@ const AddCourse = () => {
                     <div className="relative">
                         {isEditingImage ? (
                             <div>
-                                <DropboxComponent onFilesAdded={handleImageChange} />
+                                <DropboxComponent handleUpload={handleImageUpload} />
                                 <button onClick={handleImageChangeSubmit}>Change Image</button>
                             </div>
                         ) : (
@@ -172,9 +177,7 @@ const AddCourse = () => {
                             <p className="text-lg font-medium text-gray-800">{index + 1}. {chapter.title}</p>
                             <p className="text-gray-600">Class Starts on {chapter.Date} at {chapter.time}</p>
                             <div className="flex justify-between mt-2">
-                                <button className="text-blue-400 hover:text-blue-700 font py-1 px-2 rounded">
-                                    Add Video
-                                </button>
+                                <DropboxComponent handleUpload={handleUpload}></DropboxComponent>
                                 <button className="text-green-400 hover:text-green-700 font py-1 px-2 rounded">
                                     Start Class
                                 </button>
