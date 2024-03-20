@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { TypewriterEffectSmooth } from "./ui/TypeWriter";
 import { UserButton } from '@clerk/clerk-react'
 
-const Landing = ({ setIsTeacher, isTeacher ,setuser}) => {
+const Landing = ({ setIsTeacher, isTeacher, setuser }) => {
     const navigate = useNavigate();
 
     const words = [
@@ -25,15 +25,10 @@ const Landing = ({ setIsTeacher, isTeacher ,setuser}) => {
         },
     ];
 
-    const navigateToLogin = () => {
-        console.log(isTeacher)
-        if(isTeacher==1){
-            setuser("teacher")
-        }
-        else{
-            setuser("student")
-        }
+    const navigateToLogin = (isTeacherClicked) => {
         navigate('/login');
+        setIsTeacher(isTeacherClicked);
+        setuser(isTeacherClicked ? "teacher" : "student");
     };
 
     return (
@@ -46,13 +41,10 @@ const Landing = ({ setIsTeacher, isTeacher ,setuser}) => {
                     </p>
                     <TypewriterEffectSmooth words={words} />
                     <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-                        <button className="w-40 h-10 rounded-xl bg-sky-500 text-white text-sm hover:scale-110 transition" onClick={() => {
-                            setIsTeacher(1);
-                            navigateToLogin()
-                        }}>
+                        <button className="w-40 h-10 rounded-xl bg-sky-500 text-white text-sm hover:scale-110 transition" onClick={() => navigateToLogin(true)}>
                             Teacher
                         </button>
-                        <button className="w-40 h-10 rounded-xl bg-white text-black border border-black text-sm  hover:scale-110 transition" onClick={navigateToLogin}>
+                        <button className="w-40 h-10 rounded-xl bg-white text-black border border-black text-sm  hover:scale-110 transition" onClick={() => navigateToLogin(false)}>
                             Student
                         </button>
                     </div>

@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
-const Card = ({ imageUrl, title, description, url }) => {
+const Card = ({ imageUrl, title, description, url, btntxt }) => {
+    const location = useLocation();
+    const [currentPath, setCurrentPath] = useState(location.pathname);
     return (
         <div>
             <div className="relative flex flex-col mt-6 text-gray-700 bg-slate-200 shadow-md bg-clip-border rounded-xl w-96 m-2">
                 <div className="p-6">
-                    {/* Image */}
                     <img
                         src={imageUrl}
                         alt={title}
@@ -41,9 +43,11 @@ const Card = ({ imageUrl, title, description, url }) => {
                             </svg>
                         </button>
                     </a>
-                    <button className='border border-red-900/20 bg-red-900/90 text-white rounded-md px-3 py-1'>
-                        <p>Enroll</p>
-                    </button>
+                    <Link to={`http://localhost:5173${currentPath}/${btntxt}`} className="inline-block">
+                        <button className='border border-red-900/20 bg-red-900/90 text-white rounded-md px-3 py-1'>
+                            {btntxt}
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>

@@ -146,6 +146,7 @@ const SExplore = () => {
                             description={card.description}
                             imageUrl={card.imageUrl}
                             url={card.url}
+                            btntxt="Enroll"
                         />
                     ))}
                 </div>

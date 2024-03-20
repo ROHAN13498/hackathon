@@ -7,9 +7,10 @@ import Login from './components/Login';
 import TDashboard from './components/TDashboard';
 import SDashboard from './components/SDashboard';
 import SExplore from './components/SExplore';
-
+import TProfile from './components/TProfile';
+import AddCourse from './components/AddCourse';
 export default function App() {
-  const [isTeacher, setIsTeacher] = useState(0)
+  const [isTeacher, setIsTeacher] = useState(null)
   const [user, setuser] = useState("");
   return (
     <Router>
@@ -20,6 +21,8 @@ export default function App() {
         <Route path="/teacher/dashboard" element={<TDashboard />} />
         <Route path="/student/dashboard" element={<SDashboard />} />
         <Route path="/student/explore" element={<SExplore />} />
+        <Route path="/teacher/profile" element={<TProfile/>}/>
+        <Route path="/teacher/addCourse" element={<AddCourse/>}/>
       </Routes>
     </Router>
   );
