@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const TCard = ({ key,id, imageUrl, title, description }) => {
-    console.log(id)
     const location = useLocation();
     const [currentPath, setCurrentPath] = useState(location.pathname);
     return (

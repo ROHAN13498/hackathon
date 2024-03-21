@@ -2,19 +2,24 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { HiOutlineVideoCamera } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react"
 
-const ChapterItem = ({ chapterName, handleClick }) => {
-    return (
-        <div className='flex items-center gap-x-2 text-gray-600 hover:text-gray-900 cursor-pointer ' onClick={handleClick}>
-            <HiOutlineVideoCamera />
-            <p>{chapterName}</p>
-        </div >
-    );
-};
+// const ChapterItem = ({ chapterName, handleClick }) => {
+//     return (
+//         <div className='flex items-center gap-x-2 text-gray-600 hover:text-gray-900 cursor-pointer ' onClick={handleClick}>
+//             <HiOutlineVideoCamera />
+//             <p>{chapterName}</p>
+//         </div>
+//     );
+// };
 
 const SCourseSideBar = ({ course }) => {
     const [chapters, setChapters] = useState([]);
     const navigate = useNavigate();
+    const { user, isLoading } = useUser()
+    if (isLoading) {
+        return null;
+    }
 
     useEffect(() => {
         const getChapters = async () => {
@@ -31,6 +36,9 @@ const SCourseSideBar = ({ course }) => {
     const handleClick = (id) => {
         navigate(`/student/course/${id}`);
     };
+    const handleCheck = async (id) => {
+        await axios.put(`http://localhost:5000/students/students/${user.id}/modules/${id}`)
+    }
 
     return (
         <div className="h-full flex flex-col overflow-hidden">
@@ -41,13 +49,13 @@ const SCourseSideBar = ({ course }) => {
                             chapters.map((chapter) => (
                                 <div
                                     key={chapter._id}
-                                    className="flex items-center p-3 rounded-lg cursor-pointer  hover:bg-blue-100 hover:scale-110 transition-all"
+                                    className="flex  justify-between items-center p-3 rounded-lg cursor-pointer  hover:bg-blue-100 hover:scale-110 transition-all"
                                     onClick={() => handleClick(chapter._id)}
                                 >
-                                    <div className="grid place-items-center mr-4 ">
+                                    <div className="flex  place-items-center mr-4 ">
                                         <HiOutlineVideoCamera className="h-6 w-6" />
+                                        <p>{chapter.title}</p>
                                     </div>
-                                    <p>{chapter.title}</p>
                                 </div>
                             ))
                         ) : (

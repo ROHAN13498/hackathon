@@ -2,22 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import axios from "axios";
+import { useUser } from "@clerk/clerk-react"
 
 const SCourseVideo = () => {
     const { chapterId } = useParams();
+    const { isLoaded, user } = useUser();
+
+    if (!isLoaded) {
+        return null;
+    }
+
     const [module, setModule] = useState({});
 
     useEffect(() => {
         const getModule = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/students/modules/${chapterId}`);
-                setModule(res.data);
+                const res = await axios.get(`http://localhost:5000/students/modules/${chapterId}/${user.id}`);
+                setModule(res.data.module);
             } catch (error) {
                 console.error("Error fetching module:", error);
             }
         };
         getModule();
-    }, [chapterId]);
+    }, [chapterId, user]); // Include user in the dependency array
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -28,6 +35,8 @@ const SCourseVideo = () => {
             <div className="mt-4">
                 <p className="text-gray-700">Uploaded Date: {module.uploadedDate}</p>
             </div>
+            
+
         </div>
     );
 };
