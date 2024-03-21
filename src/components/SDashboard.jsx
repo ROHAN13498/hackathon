@@ -16,7 +16,8 @@ const SDashboard = () => {
     const getEnrolledCourses = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/students/enrolled-courses/${user.id}`);
-        setEnrolledCourses(response.data); // Assuming the response is an array of courses
+        setEnrolledCourses(response.data);
+        console.log(response.data)// Assuming the response is an array of courses
       } catch (error) {
         console.log("[getEnrolledCourses]:", error);
       }
@@ -39,7 +40,9 @@ const SDashboard = () => {
               key={course.id}
               title={course.title}
               description={course.description}
-              tutor={course.tutor}
+              tutor={course.tutor.name}
+              url={`/student/${course._id}`}
+              imageLink={course.imageLink}
             />
           ))}
         </div>

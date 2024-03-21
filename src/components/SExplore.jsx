@@ -2,48 +2,37 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SSideBar from './SSideBar';
 import TCard from './TCard';
-import { useUser } from '@clerk/clerk-react';
 
 const SExplore = () => {
-    const { user, isLoaded } = useUser()
-    if (!isLoaded) {
-        return null;
-    }
-
     const [searchQuery, setSearchQuery] = useState('');
     const [tutors, setTutors] = useState([]);
     const [cardData, setCardData] = useState([]);
 
     useEffect(() => {
-        console.log(user.id)
-        const updateUser = async () => {
-            try {
-                await axios.post("http://localhost:5000/students/user-id", { userId: user.id,name:user.username });
-            } catch (error) {
-                console.log("[UpdateUser:]", error);
-            }
-        };
-
+        // Function to fetch card data
         const fetchCardData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/students/tutors');
-                setCardData(response.data);
-                setTutors(response.data);
+                const response = await axios.get('http://localhost:5000/students/tutors'); // Assuming your backend API endpoint for fetching courses is /api/courses
+                setCardData(response.data); // Assuming response.data contains the card data
+                setTutors(response.data)
+                console.log(response.data)
             } catch (error) {
                 console.error('Error fetching card data:', error);
             }
         };
-        updateUser();
+
+        // Call the fetchCardData function
         fetchCardData();
     }, []);
-
 
     const handleSearchChange = (e) => {
         const value = e.target.value;
         setSearchQuery(value);
         if (value.trim() === '') {
-            setTutors(cardData);
+            // If search query is empty, reset courses to original data
+            setTutors(cardData); // Assuming cardData contains the original data
         } else {
+            // Filter courses based on search query
             const filteredCourses = cardData.filter((tutor) =>
                 tutor.name.toLowerCase().includes(value.toLowerCase())
             );
@@ -69,12 +58,13 @@ const SExplore = () => {
                 <div className='flex flex-wrap'>
                     {tutors.map((tutor) => (
                         <TCard
-                            key={tutor.userId}
+                            key={tutor._id}
+                            id={tutor.userId}
                             title={tutor.name}
                             description={tutor.aboutMe}
                             imageUrl={tutor.imageLink}
-                            url="dummy"
-                        // btntxt="Enroll"
+                            // url="dummy"
+                            // btntxt="Enroll"
                         />
                     ))}
                 </div>
