@@ -1,200 +1,77 @@
-import React, { useState } from 'react';
-import SSideBar from './TSideBar'; // Assuming the SSideBar component is correctly imported
-import Card from './Card';
+import React, { useState, useEffect } from 'react';
+import SSideBar from './TSideBar';
+import axios from 'axios';
 import { cn } from "../utils/cn";
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '@clerk/clerk-react';
+
 const TDashboard = () => {
-    const navigate=useNavigate();
-    const [editingCourseId, setEditingCourseId] = useState(null);
-    const cardData = [
-        {
-            id: 1,
-            title: 'UI/UX Review Check',
-            description: "Because it's about motivating the doers. Because I'm here to follow my dreams and inspire others.",
-            imageUrl: 'https://akm-img-a-in.tosshub.com/indiatoday/images/story/202012/chris-ried-ieic5Tq8YMk-unsplas_1200x768.jpeg?size=1200:675',
-            chapters: [
-                {
-                    title: 'C1',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C2',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C3',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C4',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 1,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C5',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                }
-            ]
-        },
-        {
-            id: 2,
-            title: 'UI/UX Review Check',
-            description: "Because it's about motivating the doers. Because I'm here to follow my dreams and inspire others.",
-            imageUrl: 'https://akm-img-a-in.tosshub.com/indiatoday/images/story/202012/chris-ried-ieic5Tq8YMk-unsplas_1200x768.jpeg?size=1200:675',
-            chapters: [
-                {
-                    title: 'C1',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 1,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C2',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C3',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C4',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C5',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                }
-            ]
+    const navigate = useNavigate();
+    const { user, isSignedIn, isLoaded } = useUser();
+    const [courses, setCourses] = useState([]);
+    const [editingCourses, setEditingCourses] = useState({});
 
-        },
-        {
-            id: 3,
-            title: 'UI/UX Review Check',
-            description: "Because it's about motivating the doers. Because I'm here to follow my dreams and inspire others.",
-            imageUrl: 'https://akm-img-a-in.tosshub.com/indiatoday/images/story/202012/chris-ried-ieic5Tq8YMk-unsplas_1200x768.jpeg?size=1200:675',
-            chapters: [
-                {
-                    title: 'C1',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 1,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C2',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C3',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C4',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C5',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
+    useEffect(() => {
+        const fetchData = async () => {
+            if (isLoaded && isSignedIn) {
+                try {
+                    const response = await axios.get(`http://localhost:5000/tutors/courses/${user.id}`);
+                    setCourses(response.data);
+                    const editingState = {};
+                    response.data.forEach(course => {
+                        editingState[course._id] = false;
+                    });
+                    setEditingCourses(editingState);
+                } catch (error) {
+                    console.error("Error:", error);
                 }
-            ]
+            }
+        };
+        fetchData();
 
-        },
-        {
-            id: 4,
-            title: 'UI/UX Review Check',
-            description: "Because it's about motivating the doers. Because I'm here to follow my dreams and inspire others.",
-            imageUrl: 'https://akm-img-a-in.tosshub.com/indiatoday/images/story/202012/chris-ried-ieic5Tq8YMk-unsplas_1200x768.jpeg?size=1200:675',
-            chapters: [
-                {
-                    title: 'C1',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 1,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C2',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C3',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C4',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
-                },
-                {
-                    title: 'C5',
-                    Date: '2024-03-01',
-                    time: '06:00:00',
-                    isLive: 0,
-                    videLink: 'https://www.youtube.com/watch?v=JxIN5fruFFo&pp=ygUMMTAgc2VjIHZpZGVv'
+        const postUserData = async () => {
+            if (isLoaded && isSignedIn) {
+                try {
+                    await axios.post('http://localhost:5000/tutors/user-id', {
+                        _id: user.id,
+                    });
+                } catch (error) {
+                    console.error("Error:", error);
                 }
-            ]
+            }
+        };
+        postUserData();
+    }, [isLoaded, isSignedIn, user]);
 
-        }
-    ];
     const handleEdit = (courseId) => {
-        setEditingCourseId(courseId);
+        setEditingCourses(prevState => ({
+            ...prevState,
+            [courseId]: !prevState[courseId] 
+        }));
     };
 
-    const handleModify = () => {
-        // Implement modify functionality here
+    const handleModify = (courseId) => {
+        navigate(`/teacher/${user.id}/courses/${courseId}`);
     };
 
-    const handleDelete = () => {
-        // Implement delete functionality here
+    const handleDelete = async (courseId) => {
+        try {
+            await axios.delete(`http://localhost:5000/tutors/courses/${courseId}`);
+            setCourses(prevCourses => prevCourses.filter(course => course._id !== courseId));
+            console.log(courseId, " Course Deleted")
+        } catch (error) {
+            console.error("Error:", error);
+        }
     };
-    const [courses, setCourses] = useState(cardData);
+    const handleAddCourse = async ()=>{
+        const res=await axios.post(`http://localhost:5000/tutors/${user.id}/courses`,{
+            title:"",
+            description:""
+        });
+        const courseId=res.data.course._id;
+        navigate(`/teacher/${user.id}/courses/${courseId}`);
+    }
+
     return (
         <div className="flex">
             <div className="w-64">
@@ -206,7 +83,7 @@ const TDashboard = () => {
                         className={cn(
                             "p-3 rounded-lg text-start leading-tight transition-all hover:bg-sky-200/40 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none hover:scale-105"
                         )}
-                        onClick={()=>navigate('/teacher/addCourse')}
+                        onClick={handleAddCourse}
                     >
                         Add Course
                     </button>
@@ -230,24 +107,18 @@ const TDashboard = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {courses.map((course, index) => (
-                            <tr key={course.id}>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm">{index + 1}.</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">{course.title}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">{course.description}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                {editingCourseId === course.id ? (
+                            <tr key={course._id}>
+                                <td className="px-6 py-4 text-sm">{index + 1}.</td>
+                                <td className="px-6 py-4 text-sm text-gray-900">{course.title}</td>
+                                <td className="px-6 py-4 text-sm text-gray-900">{course.description}</td>
+                                <td className="px-6 py-4 text-sm font-medium">
+                                    {editingCourses[course._id] ? (
                                         <>
-                                            <button onClick={handleModify} className="text-indigo-600 hover:text-indigo-900 mr-2">Modify</button>
-                                            <button onClick={handleDelete} className="text-red-600 hover:text-red-900">Delete</button>
+                                            <button onClick={() => handleModify(course._id)} className="text-indigo-600 hover:text-indigo-900 mr-2">Modify</button>
+                                            <button onClick={() => handleDelete(course._id)} className="text-red-600 hover:text-red-900">Delete</button>
                                         </>
                                     ) : (
-                                        <button onClick={() => handleEdit(course.id)} className="text-indigo-600 hover:text-indigo-900">Edit</button>
+                                        <button onClick={() => handleEdit(course._id)} className="text-indigo-600 hover:text-indigo-900">Edit</button>
                                     )}
                                 </td>
                             </tr>
@@ -258,4 +129,5 @@ const TDashboard = () => {
         </div>
     );
 };
+
 export default TDashboard;
