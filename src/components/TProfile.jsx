@@ -2,19 +2,32 @@ import React, { useState } from 'react';
 import TSideBar from './TSideBar';
 import { MdEdit } from 'react-icons/md'; // Import edit icon
 import DropboxComponent from './Dropbox'; // Import DropboxComponent
-
+import { useUser } from '@clerk/clerk-react';
+import { useEffect } from 'react';
+import axios from 'axios';
 const TProfile = () => {
-    const [TData, setTData] = useState({
-        "Name": "karthik",
-        "imgLink": "https://th.bing.com/th/id/OIP.75OdyX9LQ-UcpVDVn6yylwHaE8?w=266&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
-        "AboutMe": "Teacher AboutMe"
-    });
+    const { user, isLoaded, isSignedIn } = useUser();
+    const [TData, setTData] = useState({});
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            if (isLoaded && isSignedIn) {
+                try {
+                    const response = await axios.get(`http://localhost:5000/tutors/${user.id}/profile`);
+                    console.log(response);
+                    setTData(response.data);
+                } catch (error) {
+                    console.error('Error fetching profile data:', error);
+                }
+            }
+        };
 
+        fetchProfileData();
+    }, [isLoaded, isSignedIn]);
     const [isEditingName, setIsEditingName] = useState(false);
     const [isEditingAbout, setIsEditingAbout] = useState(false);
-    const [newName, setNewName] = useState(TData.Name);
-    const [newAboutMe, setNewAboutMe] = useState(TData.AboutMe);
-    const [newImgLink, setNewImgLink] = useState('');
+    const [newName, setNewName] = useState(TData.name);
+    const [newaboutMe, setNewaboutMe] = useState(TData.aboutMe);
+    const [newimageLink, setNewimageLink] = useState('');
     const [isEditingImage, setIsEditingImage] = useState(false);
 
     const handleNameChange = (event) => {
@@ -22,7 +35,7 @@ const TProfile = () => {
     };
 
     const handleAboutChange = (event) => {
-        setNewAboutMe(event.target.value);
+        setNewaboutMe(event.target.value);
     };
 
     const handleNameEdit = () => {
@@ -33,13 +46,25 @@ const TProfile = () => {
         setIsEditingAbout(true);
     };
 
-    const handleNameChangeSubmit = () => {
-        setTData({ ...TData, Name: newName });
+    const handleNameChangeSubmit = async () => {
+        if (newName) {
+            const res = await axios.put(`http://localhost:5000/tutors/${user.id}/name`, {
+                name: newName
+            });
+            console.log(res);
+        }
+        setTData({ ...TData, name: newName });
         setIsEditingName(false);
     };
 
-    const handleAboutChangeSubmit = () => {
-        setTData({ ...TData, AboutMe: newAboutMe });
+    const handleAboutChangeSubmit = async () => {
+        if (newaboutMe) {
+            const res = await axios.put(`http://localhost:5000/tutors/${user.id}/aboutMe`, {
+                aboutMe: newaboutMe
+            });
+            console.log(res);
+        }
+        setTData({ ...TData, aboutMe: newaboutMe });
         setIsEditingAbout(false);
     };
 
@@ -51,7 +76,7 @@ const TProfile = () => {
         if (files && files.length > 0) {
             const reader = new FileReader();
             reader.onload = () => {
-                setNewImgLink(reader.result);
+                setNewimageLink(reader.result);
             };
             reader.readAsDataURL(files[0]);
         }
@@ -65,10 +90,13 @@ const TProfile = () => {
         }
     };
 
-    const handleImageChangeSubmit = () => {
-        if (newImgLink) {
-            setTData({ ...TData, imgLink: newImgLink });
-            setNewImgLink('');
+    const handleImageChangeSubmit = async () => {
+        if (newimageLink) {
+            await axios.put(`http://localhost:5000/tutors/${user.id}/imageLink`, {
+                imageLink: newimageLink
+            })
+            setTData({ ...TData, imageLink: newimageLink });
+            setNewimageLink('');
             setIsEditingImage(false);
         }
     };
@@ -83,16 +111,28 @@ const TProfile = () => {
                     <div className="relative">
                         {isEditingImage ? (
                             <div>
-                                <DropboxComponent handleUpload={handleUpload}/>
+                                <DropboxComponent callback={(url) => setNewimageLink(url)} handleUpload={handleUpload} />
                                 <button onClick={handleImageChangeSubmit}>Change Image</button>
                             </div>
                         ) : (
                             <>
-                                <img className="w-full h-64 object-cover object-center rounded-t-lg" src={TData.imgLink} alt="Teacher Profile" />
-                                <div className="absolute top-2 right-2 bg-blue-400 rounded-full p-2">
-                                    <MdEdit onClick={handleImageEdit} className="text-white cursor-pointer" size={23} />
-                                </div>
+                                {TData.imageLink ? (
+                                    <>
+                                        <img className="w-full h-64 object-cover object-center rounded-t-lg" src={TData.imageLink} alt="Teacher Profile" />
+                                        <div className="absolute top-2 right-2 bg-blue-400 rounded-full p-2">
+                                            <MdEdit onClick={handleImageEdit} className="text-white cursor-pointer" size={23} />
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="w-full h-64 bg-gray-200 flex items-center justify-center rounded-t-lg">
+                                        <p className="text-gray-500">Add Your Image Here</p>
+                                        <div className="absolute top-2 right-2 bg-blue-400 rounded-full p-2">
+                                            <MdEdit onClick={handleImageEdit} className="text-white cursor-pointer" size={23} />
+                                        </div>
+                                    </div>
+                                )}
                             </>
+
                         )}
                     </div>
                     <div className="p-6">
@@ -101,7 +141,7 @@ const TProfile = () => {
                                 <>
                                     <input
                                         type="text"
-                                        value={newName}
+                                        defaultValue={TData.name}
                                         onChange={handleNameChange}
                                         className="outline-none border-b border-gray-400 w-48"
                                     />
@@ -109,18 +149,30 @@ const TProfile = () => {
                                 </>
                             ) : (
                                 <>
-                                    <h2 className="text-2xl font-bold text-gray-800">{TData.Name}</h2>
-                                    <div className="rounded-full p-1">
-                                        <MdEdit onClick={handleNameEdit} className="cursor-pointer" size={16} />
-                                    </div>
+                                    {TData.name ? (
+                                        <>
+                                            <h2 className="text-2xl font-bold text-gray-800">{TData.name}</h2>
+                                            <div className="rounded-full p-1">
+                                                <MdEdit onClick={handleNameEdit} className="cursor-pointer" size={16} />
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p className="text-gray-500">Add Your Name Here</p>
+                                            <div className="rounded-full p-1">
+                                                <MdEdit onClick={handleNameEdit} className="cursor-pointer" size={16} />
+                                            </div>
+                                        </>
+                                    )}
                                 </>
+
                             )}
                         </div>
                         <div className="flex items-center justify-between">
                             {isEditingAbout ? (
                                 <>
                                     <textarea
-                                        value={newAboutMe}
+                                        defaultValue={TData.aboutMe}
                                         onChange={handleAboutChange}
                                         className="outline-none border-b border-gray-400 w-full"
                                     />
@@ -128,11 +180,23 @@ const TProfile = () => {
                                 </>
                             ) : (
                                 <>
-                                    <p className="mt-2 text-gray-600">{TData.AboutMe}</p>
-                                    <div className="rounded-full p-1">
-                                        <MdEdit onClick={handleAboutEdit} className="cursor-pointer" size={16} />
-                                    </div>
+                                    {TData.aboutMe ? (
+                                        <>
+                                            <p className="mt-2 text-gray-600">{TData.aboutMe}</p>
+                                            <div className="rounded-full p-1">
+                                                <MdEdit onClick={handleAboutEdit} className="cursor-pointer" size={16} />
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p className="text-gray-500">Add Your Bio Here</p>
+                                            <div className="rounded-full p-1">
+                                                <MdEdit onClick={handleAboutEdit} className="cursor-pointer" size={16} />
+                                            </div>
+                                        </>
+                                    )}
                                 </>
+
                             )}
                         </div>
                     </div>

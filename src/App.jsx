@@ -21,7 +21,7 @@ export default function App() {
         <Route path="/teacher/dashboard" element={<TDashboard />} />
         <Route path="/student/dashboard" element={<SDashboard />} />
         <Route path="/student/explore" element={<SExplore />} />
-        <Route path="/teacher/profile" element={<TProfile/>}/>
+        <Route path="/teacher/profile"element={<TProfile/>}/>
         <Route path="/teacher/:teacherId/courses/:courseId" element={<AddCourse/>}/>
       </Routes>
     </Router>
