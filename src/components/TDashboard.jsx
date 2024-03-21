@@ -33,7 +33,7 @@ const TDashboard = () => {
             if (isLoaded && isSignedIn) {
                 try {
                     await axios.post('http://localhost:5000/tutors/user-id', {
-                        _id: user.id,
+                        userId: user.id,
                     });
                 } catch (error) {
                     console.error("Error:", error);

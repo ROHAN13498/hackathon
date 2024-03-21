@@ -26,12 +26,10 @@ export default function App() {
         <Route path="/student/explore" element={<SExplore />} />
         <Route path="/teacher/profile" element={<TProfile />} />
         <Route path="/student/:course" element={<SCourses />} />
-        <Route path="/teacher/addCourse" element={<AddCourse />} />
+        <Route path="/teacher/:teacherId/courses/:courseId" element={<AddCourse />} />
         <Route path="/student/course/:chapterId" element={<SCourseVideo />} />
         <Route path='/student/explore/tutor-course/:id' element={<TutorCourse/>}/>
       </Routes>
     </Router>
   );
 }
-
-

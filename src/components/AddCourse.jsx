@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 const AddCourse = () => {
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const { teacherId, courseId } = useParams();
     const [Course, setCourse] = useState(null);
     const [isEditingImage, setIsEditingImage] = useState(false);
@@ -37,11 +37,26 @@ const AddCourse = () => {
     };
     const handlevideoChangeSubmit = async (moduleId) => {
         console.log("Video Added!");
-        await axios.put(`http://localhost:5000/tutors/modules/${moduleId}/addLink`, {
-            link: newVidLink
-        });
-        setNewVidLink('');
+        try {
+            await axios.put(`http://localhost:5000/tutors/modules/${moduleId}/addLink`, {
+                link: newVidLink
+            });
+            const updatedModules = Course.modules.map(chapter => {
+                if (chapter._id === moduleId) {
+                    return { ...chapter, link: newVidLink };
+                }
+                return chapter;
+            });
+            setCourse(prevCourse => ({
+                ...prevCourse,
+                modules: updatedModules
+            }));
+            setNewVidLink('');
+        } catch (error) {
+            console.error('Error adding video link:', error);
+        }
     };
+
     const handleImageChangeSubmit = async () => {
         // router.put('/courses/:courseId/image'
         await axios.put(`http://localhost:5000/tutors/courses/${courseId}/image`, {
@@ -88,7 +103,7 @@ const AddCourse = () => {
             console.error('Error updating course title and description:', error);
         }
     };
-    
+
     const handleDescriptionChangeSubmit = async () => {
         const requestData = {
             title: newTitle !== '' ? newTitle : Course.title,
@@ -102,7 +117,7 @@ const AddCourse = () => {
             console.error('Error updating course title and description:', error);
         }
     };
-    
+
     const handleDeleteChapter = async (moduleId) => {
         try {
             await axios.delete(`http://localhost:5000/tutors/courses/${courseId}/modules/${moduleId}`);
@@ -132,18 +147,24 @@ const AddCourse = () => {
                         {isEditingImage ? (
                             <div>
                                 <DropboxComponent callback={(url) => setNewImgLink(url)} />
-
                                 <button onClick={handleImageChangeSubmit}>Change Image</button>
                             </div>
                         ) : (
                             <>
-                                <img className="w-full h-64 object-cover object-center rounded-t-lg" src={Course.imageLink} alt="Course Image" />
+                                {Course.imageLink ? (
+                                    <img className="w-full h-64 object-cover object-center rounded-t-lg" src={Course.imageLink} alt="Course Image" />
+                                ) : (
+                                    <div className="w-full h-64 flex items-center justify-center bg-gray-200 text-gray-600 rounded-t-lg">
+                                        Add Course Image
+                                    </div>
+                                )}
                                 <div className="absolute top-2 right-2 bg-blue-400 rounded-full p-2">
                                     <MdEdit onClick={handleImageEdit} className="text-white cursor-pointer" size={23} />
                                 </div>
                             </>
                         )}
                     </div>
+
                     <div className="p-6">
                         <div className="mb-4 flex justify-between items-center">
                             {isEditingTitle ? (
@@ -158,9 +179,19 @@ const AddCourse = () => {
                                 </>
                             ) : (
                                 <>
-                                    <h1 className="text-2xl font-bold">{Course.title}</h1>
-                                    <MdEdit onClick={handleTitleEdit} className="cursor-pointer" size={20} />
+                                    {Course.title !== '' ? (
+                                        <>
+                                            <h1 className="text-2xl font-bold">{Course.title}</h1>
+                                            <MdEdit onClick={handleTitleEdit} className="cursor-pointer" size={20} />
+                                        </>
+                                    ) : (
+                                        <>
+                                            <h1 className="text-xl text-gray-500">Add Course Title Here</h1>
+                                            <MdEdit onClick={handleTitleEdit} className="cursor-pointer" size={20} />
+                                        </>
+                                    )}
                                 </>
+
                             )}
                         </div>
                         <div className="flex justify-between items-center">
@@ -175,9 +206,19 @@ const AddCourse = () => {
                                 </>
                             ) : (
                                 <>
-                                    <p className="text-gray-600">{Course.description}</p>
-                                    <MdEdit onClick={handleDescriptionEdit} className="cursor-pointer" size={20} />
+                                    {Course.description !== '' ? (
+                                        <>
+                                            <p className="text-gray-600">{Course.description}</p>
+                                            <MdEdit onClick={handleDescriptionEdit} className="cursor-pointer" size={20} />
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p className="text-gray-500">Add Course Description Here</p>
+                                            <MdEdit onClick={handleDescriptionEdit} className="cursor-pointer" size={20} />
+                                        </>
+                                    )}
                                 </>
+
                             )}
                         </div>
                     </div>
@@ -201,7 +242,7 @@ const AddCourse = () => {
                                     Delete
                                 </button>
                                 {chapter.link ? <button className="text-green-400 hover:text-green-700 font py-1 px-2 rounded">
-                                </button>:<button className="text-green-400 hover:text-green-700 font py-1 px-2 rounded">
+                                </button> : <button className="text-green-400 hover:text-green-700 font py-1 px-2 rounded">
                                     Start Class
                                 </button>}
                             </div>
@@ -211,7 +252,7 @@ const AddCourse = () => {
                     <AddChapter teacherId={teacherId} courseId={courseId} onAddChapter={(newChapter) => setCourse({ ...Course, modules: [...Course.modules, newChapter] })} />
                 </div>
                 <div className="text-center mb-10">
-                    <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out" onClick={()=>navigate('/teacher/dashboard')}> 
+                    <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out" onClick={() => navigate('/teacher/dashboard')}>
                         Publish Course
                     </button>
                 </div>
