@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-const TCard = ({ imageUrl, title, description, url}) => {
+const TCard = ({ key,id, imageUrl, title, description }) => {
+    console.log(id)
     const location = useLocation();
     const [currentPath, setCurrentPath] = useState(location.pathname);
     return (
@@ -21,28 +22,29 @@ const TCard = ({ imageUrl, title, description, url}) => {
                     </p>
                 </div>
                 <div className="p-6 pt-0 flex justify-between">
-                    <a href={url} className="inline-block">
-                        <button
-                            className="flex items-center gap-2 px-4 py-2 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-lg select-none disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none hover:bg-gray-900/10 active:bg-gray-900/20"
-                            type="button"
-                        >
-                            Explore
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="2"
-                                stroke="currentColor"
-                                className="w-4 h-4"
+                        <Link to={`tutor-course/${id}`} className="inline-block">
+                            <button
+                                className="flex items-center gap-2 px-4 py-2 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-lg select-none disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none hover:bg-gray-900/10 active:bg-gray-900/20"
+                                type="button"
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-                                ></path>
-                            </svg>
-                        </button>
-                    </a>
+                                Explore
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth="2"
+                                    stroke="currentColor"
+                                    className="w-4 h-4"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+                                    ></path>
+                                </svg>
+                            </button>
+                        </Link>
+
                 </div>
             </div>
         </div>
