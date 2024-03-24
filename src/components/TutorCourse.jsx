@@ -9,6 +9,7 @@ import { useAuth } from '@clerk/clerk-react';
 const TutorCourse = () => {
     const location = useLocation();
     const { id } = useParams();
+
     const [searchQuery, setSearchQuery] = useState('');
     const [courses, setCourses] = useState([]);
     const [userId, setUserId] = useState(null); // State to store the user ID

@@ -49,7 +49,6 @@ const SExplore = () => {
                 return tutor.name && tutor.name.toLowerCase().includes(value.toLowerCase());
             });
 
-            // console.log(filteredCourses)
             setTutors(filteredCourses);
         }
     };
@@ -76,7 +75,7 @@ const SExplore = () => {
                                 title={tutor.name}
                                 description={tutor.aboutMe}
                                 imageUrl={tutor.imageLink}
-                                url="dummy"
+                                id={tutor._id}
                             />
                         </div>
                     ))}

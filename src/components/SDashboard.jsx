@@ -17,7 +17,7 @@ const SDashboard = () => {
       try {
         const response = await axios.get(`http://localhost:5000/students/enrolled-courses/${user.id}`);
         setEnrolledCourses(response.data);
-        console.log(response.data)// Assuming the response is an array of courses
+        console.log(response.data)
       } catch (error) {
         console.log("[getEnrolledCourses]:", error);
       }
