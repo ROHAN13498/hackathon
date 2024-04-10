@@ -30,6 +30,7 @@ const TutorCourse = () => {
                 try {
                     const response = await axios.get(`http://localhost:5000/students/courses/${id}/${userId}`);
                     setCourses(response.data);
+                    // console.log(courses);   
                 } catch (error) {
                     console.error('Error fetching card data:', error);
                 }

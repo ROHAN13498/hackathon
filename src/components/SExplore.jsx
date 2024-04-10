@@ -43,7 +43,7 @@ const SExplore = () => {
         if (value.trim() === '') {
             setTutors(cardData);
         } else {
-            console.log("details:");
+            // console.log("details:");
             // console.log(cardData)
             const filteredCourses = cardData.filter((tutor) => {
                 return tutor.name && tutor.name.toLowerCase().includes(value.toLowerCase());
@@ -75,7 +75,7 @@ const SExplore = () => {
                                 title={tutor.name}
                                 description={tutor.aboutMe}
                                 imageUrl={tutor.imageLink}
-                                id={tutor._id}
+                                id={tutor.userId}
                             />
                         </div>
                     ))}
